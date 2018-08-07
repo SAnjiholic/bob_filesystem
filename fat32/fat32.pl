@@ -46,9 +46,19 @@ while($buf[$cnt]){
 	elsif($buf[$cnt] != 0xE5) {
 		$name = sfn(@buf[$cnt..$cnt+31]);
 	}
-	if($name) {say "name : $name"};
+	if($name) {
+		print "name : $name ";
+		my $size = filesize(@buf[$cnt+28 .. $cnt+31]);
+		unless(hex($size)){print " // Directory\n";}
+		else{printf("size : %d bytes\n",hex($size))};
+	}
 	$dir_sec--;
 	$cnt += 32;
+}
+sub filesize(){
+	my $size = sprintf("%02x%02x%02x%02x",$_[-1],$_[-2],$_[-3],$_[-4]);
+#unless ($size) { $size = "Directory";}
+	return $size;
 }
 sub sfn(){
 	my @name = @_[0 .. 10];
